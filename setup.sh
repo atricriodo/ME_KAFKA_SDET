@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# Get the host IP address
-export HOST_IP="$(curl http://checkip.amazonaws.com/)"
-
-echo "HOST_IP=$HOST_IP" > .env
-
 # Restart docker containers
-docker-compose down
+docker-compose down --remove-orphans --rmi -v
 docker-compose up -d --build
 
-docker-compose logs -f --tail=50 qscore
+
+echo "QScore API is at $(gp url 8081)"
+echo "KafkaHQ is at $(gp url 8082)"
+docker-compose logs -f --tail=30 qscore
