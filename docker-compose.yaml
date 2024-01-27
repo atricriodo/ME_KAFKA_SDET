@@ -1,0 +1,52 @@
+version: '3'
+services:
+  zookeeper:
+    image: zookeeper:3.8
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: bitnami/kafka:3.1
+    ports:
+      - "9092:9092"
+    environment:
+      HOSTNAME_COMMAND: "route -n | awk '/UG[ \t]/{print $$2}'"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      ALLOW_PLAINTEXT_LISTENER: yes
+      ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.5.3
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:9092'
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    depends_on:
+      - zookeeper
+      - kafka
+
+  kafkahq:
+    image: tchiotludo/akhq
+    ports:
+      - "8082:8080"
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            local:
+              properties:
+                bootstrap.servers: "kafka:9092"
+              schema-registry:
+                url: "http://schema-registry:8081"
+
+  qscore:
+    build:
+      context: .
+      dockerfile: Dockerfile.qscore
+    depends_on:
+      - kafka
+      - kafkahq
+    ports:
+      - 8081:8080

@@ -1,0 +1,17 @@
+# Use the official OpenJDK base image
+FROM openjdk:19-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the entire project directory into the container
+COPY ./qscore-app/ /app
+
+# Grant execute permission to the Gradle Wrapper
+RUN chmod +x /app/gradlew
+
+# Expose the port the app runs on
+EXPOSE 8080
+
+# Command to run the application
+CMD ["./gradlew", "bootRun"]
