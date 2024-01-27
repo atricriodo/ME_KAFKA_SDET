@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Restart docker containers
-docker-compose down --remove-orphans --rmi -v
+docker-compose down --remove-orphans --volumes --rmi all
 docker-compose up -d --build
 
 
