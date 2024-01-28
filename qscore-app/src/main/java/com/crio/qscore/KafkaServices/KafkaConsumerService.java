@@ -13,7 +13,8 @@ public class KafkaConsumerService {
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_RESET = "\u001B[0m";
 
-    @KafkaListener(topics = "scores", groupId = "sports-fans-web")
+    // TODO: Uncomment
+    // @KafkaListener(topics = "scores", groupId = "sports-fans-web")
     public void listen(String message) throws Exception {
         AppIsDown.checkIfDown();
         System.out.println("Received message in group sports-fans-web: " + message);

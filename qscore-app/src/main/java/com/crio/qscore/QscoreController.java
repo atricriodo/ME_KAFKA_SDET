@@ -29,7 +29,7 @@ public class QscoreController {
     }
 
     @PostMapping("/normalscore")
-    public String postScore(@RequestBody Map<String, Object> scoreData) {
+    public String postScore(@RequestBody Map<String, Object> scoreData) throws InterruptedException {
 
         AppIsDown.checkIfDown();
 
